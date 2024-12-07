@@ -20,7 +20,10 @@ public class PNumGanChai : BaseEnemy
         yield return new WaitForSeconds(5);
         if (!_isPCClose )
         {
-            Debug.Log("You Dead");
+            JumpScare();
+            yield return new WaitForSeconds(1);
+            WinMenu.SetActive(true);  
+            PlayerState.CheckWinCondition();
         }
         _onEvent = false;
     }

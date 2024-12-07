@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PalungChang : BaseEnemy
@@ -7,49 +6,61 @@ public class PalungChang : BaseEnemy
     [SerializeField] private GameObject[] _statePosition;
     [SerializeField] private GameObject _currentRoom;
     [SerializeField] private DoorInteract _dooInteract;
+
     public override void EnemyEvent()
     {
-        Debug.Log("OnChang");
-        if (EnemyState < 3)
+        Debug.Log("OnChang Event Triggered");
+
+        if (EnemyState < _statePosition.Length)
         {
             EnemyState++;
-            Debug.Log(EnemyState);
-            MoveCheck(EnemyState);
+            MoveToState(EnemyState);
         }
         else
         {
             EnemyState = 0;
-            MoveCheck(EnemyState);
+            MoveToState(EnemyState);
         }
     }
-    private void MoveCheck(int state)
+
+    private void MoveToState(int state)
     {
-        if (_currentRoom != null && state - 1 >= 0)
+        Debug.Log($"Moving to state {state}");
+
+        if (_currentRoom != null)
         {
             _currentRoom.SetActive(false);
-            _currentRoom = _statePosition[state - 1];
+        }
+
+        if (state < _statePosition.Length)
+        {
+            _currentRoom = _statePosition[state];
             _currentRoom.SetActive(true);
         }
-        else if (_currentRoom == null)
+
+        if (state == _statePosition.Length)
         {
-            _currentRoom = _statePosition[state - 1];
-            _currentRoom.SetActive(true);
+            StartCoroutine(WaitForJump());
         }
-        else if (state >= 3)
+        else
         {
-            StartCoroutine(WaitForjupm());
+            StartCoroutine(DelayNextEvent(5f));
         }
-        StartCoroutine(Delay(5));
     }
-    public IEnumerator WaitForjupm()
+
+    private IEnumerator WaitForJump()
     {
-        yield return new WaitForSeconds(5);
-        if(!_dooInteract.IsActive) 
+        yield return new WaitForSeconds(5f);
+
+        if (!_dooInteract.IsActive)
         {
-            Debug.Log("Dead");
+            JumpScare();
         }
+
+        _onEvent = false;
     }
-    public IEnumerator Delay(float time)
+
+    private IEnumerator DelayNextEvent(float time)
     {
         yield return new WaitForSeconds(time);
         _onEvent = false;
