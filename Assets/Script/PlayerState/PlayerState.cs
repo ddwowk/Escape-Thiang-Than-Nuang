@@ -12,6 +12,7 @@ public class PlayerState : MonoBehaviour
     private int _time = 0;
     [SerializeField] private TextMeshProUGUI _text;
     [SerializeField] private GameObject _endUI;
+    [SerializeField] private TextMeshProUGUI _timerUI;
     public int ActionLevel { get => actionLevel; set => actionLevel = value; }
 
     private void Init(int maxAnxiety)
@@ -20,7 +21,8 @@ public class PlayerState : MonoBehaviour
     }
     private void Start()
     {
-        Init(100);
+        Init(300);
+        StartCoroutine(Timer());
     }
     private void FixedUpdate()
     {
@@ -34,12 +36,16 @@ public class PlayerState : MonoBehaviour
     }
     public IEnumerator Timer()
     {
-        yield return new WaitForSeconds(150);
-        _time++;
-        if (_time >= 6)
+        while (true)
         {
-            CheckWinCondition();
-            _endUI.SetActive(true);
+            yield return new WaitForSeconds(150);
+            _time++;
+            _timerUI.text = $"0{_time}:00";
+            if (_time >= 6)
+            {
+                CheckWinCondition();
+                _endUI.SetActive(true);
+            }
         }
     }
     public void CheckWinCondition()

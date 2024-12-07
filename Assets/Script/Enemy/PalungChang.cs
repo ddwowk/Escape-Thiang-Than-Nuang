@@ -55,6 +55,8 @@ public class PalungChang : BaseEnemy
         if (!_dooInteract.IsActive)
         {
             JumpScare();
+            WinMenu.SetActive(true);
+            PlayerState.CheckWinCondition();
         }
 
         _onEvent = false;
